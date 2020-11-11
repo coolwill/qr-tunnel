@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.willswill.qrtunnel.gui.SenderForm">
+  <grid id="27dc6" binding="panel1" default-binding="true" layout-manager="BorderLayout" hgap="0" vgap="0">
+    <constraints>
+      <xy x="20" y="20" width="500" height="400"/>
+    </constraints>
+    <properties>
+      <minimumSize width="444" height="400"/>
+    </properties>
+    <border type="none"/>
+    <children>
+      <grid id="ef980" layout-manager="BorderLayout" hgap="0" vgap="0">
+        <constraints border-constraint="North"/>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <grid id="d4486" layout-manager="FlowLayout" hgap="5" vgap="0" flow-align="2">
+            <constraints border-constraint="West"/>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="5f68b" class="javax.swing.JButton" binding="chooseButton" default-binding="true">
+                <constraints/>
+                <properties>
+                  <text value="Choose File"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+          <grid id="a50ab" layout-manager="BorderLayout" hgap="0" vgap="0">
+            <constraints border-constraint="Center"/>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="82135" class="javax.swing.JProgressBar" binding="totalProgress">
+                <constraints border-constraint="North"/>
+                <properties>
+                  <foreground color="-11768192"/>
+                  <preferredSize width="146" height="6"/>
+                </properties>
+              </component>
+              <component id="db03f" class="javax.swing.JProgressBar" binding="fileProgress">
+                <constraints border-constraint="Center"/>
+                <properties>
+                  <foreground color="-11768192"/>
+                  <preferredSize width="146" height="6"/>
+                </properties>
+              </component>
+              <component id="8f22b" class="javax.swing.JLabel" binding="filenameLabel">
+                <constraints border-constraint="South"/>
+                <properties>
+                  <horizontalAlignment value="0"/>
+                  <preferredSize width="0" height="17"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+          <grid id="347ba" layout-manager="FlowLayout" hgap="5" vgap="0" flow-align="2">
+            <constraints border-constraint="East"/>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="dae03" class="javax.swing.JButton" binding="startButton" default-binding="true">
+                <constraints/>
+                <properties>
+                  <text value="Start"/>
+                </properties>
+              </component>
+              <component id="5a6e0" class="javax.swing.JButton" binding="stopButton" default-binding="true">
+                <constraints/>
+                <properties>
+                  <text value="Stop"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+        </children>
+      </grid>
+      <grid id="7afb4" binding="imagePanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+        <constraints border-constraint="Center"/>
+        <properties/>
+        <border type="none"/>
+        <children/>
+      </grid>
+    </children>
+  </grid>
+</form>

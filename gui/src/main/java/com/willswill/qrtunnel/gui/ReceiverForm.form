@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.willswill.qrtunnel.gui.ReceiverForm">
+  <grid id="27dc6" binding="panel1" default-binding="true" layout-manager="BorderLayout" hgap="0" vgap="0">
+    <constraints>
+      <xy x="20" y="20" width="500" height="400"/>
+    </constraints>
+    <properties>
+      <preferredSize width="400" height="200"/>
+    </properties>
+    <border type="none"/>
+    <children>
+      <grid id="fe209" layout-manager="BorderLayout" hgap="0" vgap="0">
+        <constraints border-constraint="North"/>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <grid id="99462" layout-manager="FlowLayout" hgap="5" vgap="0" flow-align="1">
+            <constraints border-constraint="West"/>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="e70f3" class="javax.swing.JButton" binding="startButton" default-binding="true">
+                <constraints/>
+                <properties>
+                  <text value="Start"/>
+                </properties>
+              </component>
+              <component id="24366" class="javax.swing.JButton" binding="stopButton" default-binding="true">
+                <constraints/>
+                <properties>
+                  <enabled value="false"/>
+                  <text value="Stop"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+          <grid id="2899e" layout-manager="BorderLayout" hgap="0" vgap="0">
+            <constraints border-constraint="Center"/>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="52bef" class="javax.swing.JProgressBar" binding="fileProgress">
+                <constraints border-constraint="North"/>
+                <properties>
+                  <preferredSize width="146" height="6"/>
+                </properties>
+              </component>
+              <component id="cdd3" class="javax.swing.JLabel" binding="filenameLabel">
+                <constraints border-constraint="Center"/>
+                <properties>
+                  <horizontalAlignment value="0"/>
+                  <preferredSize width="0" height="17"/>
+                  <text value=""/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+          <grid id="edec5" layout-manager="FlowLayout" hgap="5" vgap="0" flow-align="1">
+            <constraints border-constraint="East"/>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="c2b71" class="javax.swing.JButton" binding="senderButton" default-binding="true">
+                <constraints/>
+                <properties>
+                  <text value="Sender"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+        </children>
+      </grid>
+      <scrollpane id="86330">
+        <constraints border-constraint="Center"/>
+        <properties>
+          <horizontalScrollBarPolicy value="31"/>
+        </properties>
+        <border type="none"/>
+        <children>
+          <component id="5d7d" class="javax.swing.JTextArea" binding="logView">
+            <constraints/>
+            <properties>
+              <editable value="false"/>
+              <margin top="0" left="5" bottom="0" right="0"/>
+              <rows value="10"/>
+            </properties>
+          </component>
+        </children>
+      </scrollpane>
+    </children>
+  </grid>
+</form>
