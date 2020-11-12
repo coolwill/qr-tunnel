@@ -82,7 +82,7 @@ public class SenderForm {
 
             @Override
             public void fileBegin(FileInfo fileInfo) {
-                totalImages = fileInfo.getDataCount();
+                totalImages = fileInfo.getChunkCount();
                 updateProgress();
                 filenameLabel.setText(fileInfo.getFilename());
                 Launcher.log("Sending file " + fileInfo.getFilename());

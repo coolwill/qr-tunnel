@@ -10,10 +10,9 @@ import com.google.zxing.qrcode.QRCodeReader;
 import lombok.extern.slf4j.Slf4j;
 
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -29,7 +28,9 @@ public class Decoder {
     private final DecoderCallback callback;
 
     private FileInfo fileInfo;
-    private ByteArrayOutputStream outputStream;
+    private RandomAccessFile dataFile;
+    private RandomAccessFile configFile;
+    private byte[] receivedFlags;
     private int lastNum = -1;
     private int lastNonce = -1;
 
@@ -85,15 +86,13 @@ public class Decoder {
 
             log.info("Received picture " + num);
 
-            if (type == Const.TYPE_FILE) {
+            if (type == Const.TYPE_FILE) { // 重复触发问题
                 byte[] bFileInfo = Arrays.copyOfRange(buf, 20, len + 20);
-                fileInfo = FileInfo.deserialize(bFileInfo);
-                lastNum = 0;
-                outputStream = new ByteArrayOutputStream();
-                log.info("Begin file " + fileInfo.getFilename());
-
-                if (callback != null) {
-                    callback.fileBegin(fileInfo);
+                FileInfo fileInfo = FileInfo.deserialize(bFileInfo);
+                if (this.fileInfo == null || !this.fileInfo.equals(fileInfo)) {
+                    this.fileInfo = fileInfo;
+                    lastNum = 0;
+                    beginFile();
                 }
             } else if (type == Const.TYPE_DATA) {
                 if (fileInfo == null) {
@@ -105,18 +104,7 @@ public class Decoder {
                 }
                 lastNum = num;
 
-                outputStream.write(buf, 20, len);
-                if (num == fileInfo.getDataCount()) {
-                    if (callback != null) {
-                        callback.fileEnd(fileInfo);
-                    }
-                    log.info("Save file " + fileInfo.getFilename());
-                    saveFile();
-                } else {
-                    if (callback != null) {
-                        callback.imageReceived(num);
-                    }
-                }
+                writeFilePart(num, buf, 20, len);
             } else {
                 throw new DecodeException("Type " + type + " is not supported!");
             }
@@ -125,26 +113,74 @@ public class Decoder {
         }
     }
 
-    void saveFile() throws IOException {
+    void beginFile() throws IOException {
+        log.info("Begin file " + fileInfo.getFilename());
         File dir;
         if (fileInfo.getPath() == null || fileInfo.getPath().length() == 0 || fileInfo.getPath().equals("/")) {
             dir = new File(appConfigs.getSaveDir());
         } else {
             dir = new File(appConfigs.getSaveDir(), fileInfo.getPath());
         }
-
         if (!dir.exists()) {
             dir.mkdirs();
         }
 
-        File file = new File(dir, fileInfo.getFilename());
-        try (FileOutputStream fos = new FileOutputStream(file)) {
-            fos.write(outputStream.toByteArray());
+        dataFile = new RandomAccessFile(new File(dir, fileInfo.getFilename()), "rw");
+        dataFile.setLength(fileInfo.getLength());
+
+        configFile = new RandomAccessFile(new File(dir, fileInfo.getFilename() + ".cfg"), "rw");
+        configFile.setLength(fileInfo.getChunkCount());
+
+        receivedFlags = new byte[fileInfo.getChunkCount()];
+
+        if (callback != null) {
+            callback.fileBegin(fileInfo);
         }
+    }
+
+    synchronized void writeFilePart(int num, byte[] buf, int offset, int len) throws IOException {
+        int pos = (num - 1) * fileInfo.getChunkSize();
+        dataFile.seek(pos);
+        dataFile.write(buf, offset, len);
+
+        configFile.seek(num - 1);
+        configFile.writeByte(1);
+
+        receivedFlags[num - 1] = 1;
+
+        if (callback != null) {
+            callback.imageReceived(num);
+        }
+
+        // check if file is completed
+        if (checkFileEnd()) {
+            endFile();
+        }
+    }
+
+    boolean checkFileEnd() {
+        for (byte receivedFlag : receivedFlags) {
+            if (receivedFlag == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    void endFile() throws IOException {
+        log.info("Save file " + fileInfo.getFilename());
+        dataFile.close();
+
+        if (callback != null) {
+            callback.fileEnd(fileInfo);
+        }
+
+        reset();
     }
 
     public void reset() {
         lastNum = -1;
         lastNonce = -1;
+        fileInfo = null;
     }
 }

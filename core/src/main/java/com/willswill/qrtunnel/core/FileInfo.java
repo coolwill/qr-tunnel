@@ -11,7 +11,8 @@ public class FileInfo {
     private String path;
     private String filename;
     private long length;
-    private int dataCount;
+    private int chunkSize;
+    private int chunkCount;
 
     public static byte[] serialize(FileInfo fileInfo) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -19,7 +20,8 @@ public class FileInfo {
             oos.writeUTF(fileInfo.path);
             oos.writeUTF(fileInfo.filename);
             oos.writeLong(fileInfo.length);
-            oos.writeInt(fileInfo.dataCount);
+            oos.writeInt(fileInfo.chunkSize);
+            oos.writeInt(fileInfo.chunkCount);
             oos.flush();
             return outputStream.toByteArray();
         }
@@ -28,7 +30,7 @@ public class FileInfo {
     public static FileInfo deserialize(byte[] bytes) throws IOException {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
         try (ObjectInputStream ois = new ObjectInputStream(inputStream)) {
-            return new FileInfo(ois.readUTF(), ois.readUTF(), ois.readLong(), ois.readInt());
+            return new FileInfo(ois.readUTF(), ois.readUTF(), ois.readLong(), ois.readInt(), ois.readInt());
         }
     }
 }

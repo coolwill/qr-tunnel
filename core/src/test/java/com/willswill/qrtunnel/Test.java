@@ -15,6 +15,7 @@ public class Test {
 
     public static void test2() {
         AppConfigs appConfigs = new AppConfigs();
+        appConfigs.setSaveDir("Received");
         Decoder decoder = new Decoder(appConfigs, null);
 
         Encoder encoder = new Encoder(appConfigs, new EncoderCallback() {
@@ -28,7 +29,7 @@ public class Test {
             }
         });
 
-        File file = new File("D:\\Temp\\1.jpg");
+        File file = new File("D:\\Temp\\1.png");
         try {
             encoder.encode(file);
         } catch (Exception e) {

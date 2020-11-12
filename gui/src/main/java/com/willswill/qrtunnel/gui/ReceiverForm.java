@@ -103,7 +103,7 @@ public class ReceiverForm {
 
             @Override
             public void fileBegin(FileInfo fileInfo) {
-                totalImages = fileInfo.getDataCount();
+                totalImages = fileInfo.getChunkCount();
                 filenameLabel.setText(fileInfo.getFilename());
                 updateProgress();
                 Launcher.log("Receiving file " + fileInfo.getFilename());

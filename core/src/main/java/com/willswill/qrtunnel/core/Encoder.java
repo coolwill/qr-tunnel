@@ -40,7 +40,7 @@ public class Encoder {
         this.appConfigs = appConfigs;
         this.callback = callback;
 
-        buf = new byte[appConfigs.getPerImageContentLength() + 20];
+        buf = new byte[appConfigs.getChunkSize() + 20];
         crc32 = new CRC32();
         random = new Random();
         qrCodeWriter = new QRCodeWriter();
@@ -55,7 +55,8 @@ public class Encoder {
                 appConfigs.getRootPath() == null ? "/" : file.getParentFile().getAbsolutePath().substring(appConfigs.getRootPath().length()),
                 file.getName(),
                 file.length(),
-                (int) Math.ceil(file.length() / (double) appConfigs.getPerImageContentLength()));
+                appConfigs.getChunkSize(),
+                (int) Math.ceil(file.length() / (double) appConfigs.getChunkSize()));
 
         if (callback != null) {
             callback.fileBegin(fileInfo);
@@ -63,7 +64,7 @@ public class Encoder {
 
         // file info
         byte[] bFileInfo = FileInfo.serialize(fileInfo);
-        if (bFileInfo.length > appConfigs.getPerImageContentLength()) {
+        if (bFileInfo.length > appConfigs.getChunkSize()) {
             throw new IOException("File name or path is too long!");
         }
         System.arraycopy(bFileInfo, 0, buf, 20, bFileInfo.length);
@@ -74,7 +75,7 @@ public class Encoder {
             running = true;
             int num = 1;
             while (running && inputStream.available() > 0) {
-                int len = inputStream.read(buf, 20, appConfigs.getPerImageContentLength());
+                int len = inputStream.read(buf, 20, appConfigs.getChunkSize());
                 if (len > 0) {
                     log.info("Send picture " + (num));
 
