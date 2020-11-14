@@ -5,6 +5,7 @@ import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
 import com.google.zxing.qrcode.detector.FinderPattern;
+import com.willswill.qrtunnel.core.DecodeException;
 import lombok.AllArgsConstructor;
 
 import java.awt.image.BufferedImage;
@@ -12,7 +13,7 @@ import java.util.EnumMap;
 import java.util.Map;
 
 public class GetCodeCoordinates {
-    public static Layout detect(BufferedImage image) throws ReaderException {
+    public static Layout detect(BufferedImage image) throws ReaderException, DecodeException {
         QRCodeReader qrCodeReader = new QRCodeReader();
         Map<DecodeHintType, Object> hints = new EnumMap<>(DecodeHintType.class);
         hints.put(DecodeHintType.CHARACTER_SET, "ISO-8859-1");
@@ -62,6 +63,11 @@ public class GetCodeCoordinates {
 
         int rect0Left = left - targetWidth * colIndex;
         int rect0Top = top - targetHeight * rowIndex;
+
+        // check
+        if (rect0Left + targetWidth * cols > image.getWidth() || rect0Top + targetHeight * rows > image.getHeight()) {
+            throw new DecodeException("Rect is out of screen");
+        }
 
         return new Layout(rect0Left, rect0Top, targetWidth, targetHeight, rows, cols);
     }

@@ -103,11 +103,8 @@ public class SenderForm {
         chooseButton.addActionListener(e -> {
             JFileChooser fileChooser = new JFileChooser(selectedFile == null ? new File("").getAbsoluteFile() : selectedFile.getParentFile());
             fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-            fileChooser.setDialogTitle("选择文件");
-            if (selectedFile != null) {
-                fileChooser.setCurrentDirectory(selectedFile.getParentFile());
-            }
-            fileChooser.showDialog(new JLabel(), "选择");
+            fileChooser.setDialogTitle("Choose File To Send");
+            fileChooser.showDialog(new JLabel(), "Choose");
             File file = fileChooser.getSelectedFile();
             if (file != null && file.exists()) {
                 selectedFile = file;

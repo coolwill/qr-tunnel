@@ -3,6 +3,8 @@ package com.willswill.qrtunnel.gui;
 import com.willswill.qrtunnel.core.AppConfigs;
 import lombok.Data;
 
+import java.io.File;
+
 @Data
 public class Launcher {
     public static final Launcher self = new Launcher();
@@ -30,7 +32,7 @@ public class Launcher {
         appConfigs.setImageWidth(480);
         appConfigs.setImageHeight(480);
         appConfigs.setSenderLayout("1*1");
-        appConfigs.setSaveDir("Received");
+        appConfigs.setSaveDir(new File("Received").getAbsolutePath());
     }
 
     public void showReceiverForm() {

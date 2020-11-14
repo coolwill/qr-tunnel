@@ -65,6 +65,8 @@ public class ReceiverForm {
             } catch (ReaderException ex) {
                 JOptionPane.showMessageDialog(panel1, "Failed to detect capture rect!");
                 return;
+            } catch (DecodeException ex) {
+                JOptionPane.showMessageDialog(panel1, ex.getMessage());
             } catch (Exception ex) {
                 log.error("Failed to capture screenshot!", ex);
                 JOptionPane.showMessageDialog(panel1, "Failed to capture screenshot!");
@@ -90,7 +92,7 @@ public class ReceiverForm {
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
     }
 
-    void detectCaptureRect() throws ReaderException, AWTException {
+    void detectCaptureRect() throws ReaderException, DecodeException, AWTException {
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
         Robot robot = new Robot();
         BufferedImage image = robot.createScreenCapture(new Rectangle(0, 0, d.width, d.height));

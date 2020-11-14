@@ -4,6 +4,7 @@ import com.willswill.qrtunnel.core.AppConfigs;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 
 public class ConfigsForm {
     private JPanel panel1;
@@ -34,6 +35,19 @@ public class ConfigsForm {
     }
 
     void initComponents() {
+        chooseButton.addActionListener(e -> {
+            String selectedDir = saveDirTextField.getText();
+            JFileChooser fileChooser = new JFileChooser(new File(selectedDir));
+            fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            fileChooser.setDialogTitle("Choose Save Directory");
+            fileChooser.showDialog(new JLabel(), "Choose");
+            File file = fileChooser.getSelectedFile();
+            if (file != null && file.exists()) {
+                saveDirTextField.setText(file.getAbsolutePath());
+                saveDirTextField.setToolTipText(file.getAbsolutePath());
+            }
+        });
+
         saveConfigsButton.addActionListener(e -> {
             saveForm();
             if (Launcher.self.getSenderForm() != null) {
@@ -44,6 +58,7 @@ public class ConfigsForm {
     }
 
     public void show() {
+        fillForm();
         frame.setVisible(true);
     }
 
@@ -60,6 +75,7 @@ public class ConfigsForm {
     void fillForm() {
         AppConfigs appConfigs = Launcher.getAppConfigs();
         saveDirTextField.setText(appConfigs.getSaveDir());
+        saveDirTextField.setToolTipText(appConfigs.getSaveDir());
         imageWidthTextField.setText(String.valueOf(appConfigs.getImageWidth()));
         chunkSizeTextField.setText(String.valueOf(appConfigs.getChunkSize()));
         sendIntervalTextField.setText(String.valueOf(appConfigs.getSendInterval()));
