@@ -67,6 +67,7 @@ public class ReceiverForm {
                 return;
             } catch (DecodeException ex) {
                 JOptionPane.showMessageDialog(panel1, ex.getMessage());
+                return;
             } catch (Exception ex) {
                 log.error("Failed to capture screenshot!", ex);
                 JOptionPane.showMessageDialog(panel1, "Failed to capture screenshot!");
