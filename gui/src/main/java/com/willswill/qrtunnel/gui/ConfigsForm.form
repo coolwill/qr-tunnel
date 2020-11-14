@@ -2,7 +2,7 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.willswill.qrtunnel.gui.ConfigsForm">
   <grid id="27dc6" binding="panel1" default-binding="true" layout-manager="FlowLayout" hgap="0" vgap="5" flow-align="0">
     <constraints>
-      <xy x="20" y="20" width="1087" height="400"/>
+      <xy x="20" y="20" width="1110" height="400"/>
     </constraints>
     <properties>
       <preferredSize width="400" height="250"/>
@@ -44,7 +44,7 @@
             <properties>
               <editable value="false"/>
               <enabled value="true"/>
-              <preferredSize width="200" height="24"/>
+              <preferredSize width="220" height="20"/>
             </properties>
           </component>
           <component id="1b0f6" class="javax.swing.JButton" binding="chooseButton" default-binding="true">
@@ -152,13 +152,27 @@
                 <properties>
                   <horizontalAlignment value="4"/>
                   <preferredSize width="120" height="17"/>
-                  <text value="QR Code Count"/>
+                  <text value="Sender Layout"/>
                 </properties>
               </component>
-              <component id="58602" class="javax.swing.JTextField" binding="threadCountTextField">
+              <component id="cd05c" class="javax.swing.JComboBox" binding="senderLayoutComboBox">
                 <constraints border-constraint="Center"/>
                 <properties>
-                  <preferredSize width="50" height="24"/>
+                  <model>
+                    <item value="1*1"/>
+                    <item value="1*2"/>
+                    <item value="1*3"/>
+                    <item value="1*4"/>
+                    <item value="2*1"/>
+                    <item value="2*2"/>
+                    <item value="2*3"/>
+                    <item value="2*4"/>
+                    <item value="3*1"/>
+                    <item value="3*2"/>
+                    <item value="3*3"/>
+                    <item value="3*4"/>
+                  </model>
+                  <preferredSize width="70" height="30"/>
                 </properties>
               </component>
             </children>

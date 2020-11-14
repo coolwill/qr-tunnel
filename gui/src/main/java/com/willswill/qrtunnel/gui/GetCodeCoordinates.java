@@ -5,14 +5,14 @@ import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
 import com.google.zxing.qrcode.detector.FinderPattern;
+import lombok.AllArgsConstructor;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.EnumMap;
 import java.util.Map;
 
 public class GetCodeCoordinates {
-    public static Rectangle getQrCodeCoordinates(BufferedImage image) throws ReaderException {
+    public static Layout detect(BufferedImage image) throws ReaderException {
         QRCodeReader qrCodeReader = new QRCodeReader();
         Map<DecodeHintType, Object> hints = new EnumMap<>(DecodeHintType.class);
         hints.put(DecodeHintType.CHARACTER_SET, "ISO-8859-1");
@@ -40,9 +40,12 @@ public class GetCodeCoordinates {
         int width = right - left;
         int height = bottom - top;
 
-        String[] split = result.getText().split("\\*");
-        int targetWidth = Integer.parseInt(split[0]);
-        int targetHeight = Integer.parseInt(split[1]);
+        String[] split = result.getText().split("/");
+        int num = Integer.parseInt(split[0]);
+        String[] split1 = split[1].split("\\*");
+        String[] split2 = split[2].split("\\*");
+        int targetWidth = Integer.parseInt(split2[0]);
+        int targetHeight = Integer.parseInt(split2[1]);
 
         if (width != targetWidth) {
             int paddingLeft = (targetWidth - width) / 2;
@@ -51,6 +54,25 @@ public class GetCodeCoordinates {
             top -= paddingTop;
         }
 
-        return new Rectangle(left, top, targetWidth, targetHeight);
+        int rows = Integer.parseInt(split1[0]);
+        int cols = Integer.parseInt(split1[1]);
+        int index = num - 1;
+        int rowIndex = index / cols;
+        int colIndex = index % cols;
+
+        int rect0Left = left - targetWidth * colIndex;
+        int rect0Top = top - targetHeight * rowIndex;
+
+        return new Layout(rect0Left, rect0Top, targetWidth, targetHeight, rows, cols);
+    }
+
+    @AllArgsConstructor
+    public static class Layout {
+        public int left;
+        public int top;
+        public int width;
+        public int height;
+        public int rows;
+        public int cols;
     }
 }

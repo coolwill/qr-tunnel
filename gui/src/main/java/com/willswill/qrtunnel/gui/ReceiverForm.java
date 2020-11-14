@@ -32,7 +32,7 @@ public class ReceiverForm {
 
     private JFrame frame;
     private Decoder decoder;
-    private Rectangle captureRect;
+    GetCodeCoordinates.Layout layout;
     boolean running = false;
     private final RingBuffer<String> logBuf = new RingBuffer<>(200);
 
@@ -45,12 +45,12 @@ public class ReceiverForm {
         frame.setContentPane(form.panel1);
         frame.setSize(300, 200);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        form.frame = frame;
 
         form.initComponents();
 
         frame.pack();
         frame.setVisible(true);
-        form.frame = frame;
         return form;
     }
 
@@ -94,10 +94,9 @@ public class ReceiverForm {
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
         Robot robot = new Robot();
         BufferedImage image = robot.createScreenCapture(new Rectangle(0, 0, d.width, d.height));
-        Rectangle rectangle = GetCodeCoordinates.getQrCodeCoordinates(image);
-        log.info(rectangle.toString());
-        Launcher.log("Capture rect is set to " + rectangle.x + "," + rectangle.y + " " + rectangle.width + "*" + rectangle.height);
-        captureRect = rectangle;
+        layout = GetCodeCoordinates.detect(image);
+        log.info(layout.toString());
+        Launcher.log("Capture rect  is set to " + layout.left + "," + layout.top + " " + layout.width * layout.cols + "*" + layout.height * layout.rows);
     }
 
     void startCaptureAsync() {
@@ -118,6 +117,7 @@ public class ReceiverForm {
 
             @Override
             public void fileEnd(FileInfo fileInfo) {
+                Launcher.log("Received file " + fileInfo.getFilename() + " with " + fileInfo.getLength() + "bytes");
                 resetProgress();
             }
         });
@@ -136,13 +136,21 @@ public class ReceiverForm {
     }
 
     void startCapture() throws Exception {
+        Rectangle captureRect = new Rectangle(layout.left, layout.top, layout.width * layout.cols, layout.height * layout.rows);
         Robot robot = new Robot();
         BufferedImage image;
         running = true;
+        int[][] nonceArr = new int[layout.rows][layout.cols];
         while (running) {
             image = robot.createScreenCapture(captureRect);
             try {
-                decoder.decode(image);
+                // crop image
+                for (int i = 0; i < layout.rows; i++) {
+                    for (int j = 0; j < layout.cols; j++) {
+                        BufferedImage cropped = image.getSubimage(layout.width * j, layout.height * i, layout.width, layout.height);
+                        nonceArr[i][j] = decoder.decode(cropped, nonceArr[i][j]);
+                    }
+                }
             } catch (NotFoundException | FormatException | ChecksumException ignore) {
             } catch (DecodeException e) {
                 log.error("Decode failed: " + e.getMessage());

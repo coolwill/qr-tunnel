@@ -76,7 +76,7 @@
           </grid>
         </children>
       </grid>
-      <grid id="7afb4" binding="imagePanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+      <grid id="7afb4" binding="imagePanel" layout-manager="FlowLayout" hgap="0" vgap="0" flow-align="1">
         <constraints border-constraint="Center"/>
         <properties/>
         <border type="none"/>

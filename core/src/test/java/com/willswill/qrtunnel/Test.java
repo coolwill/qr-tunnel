@@ -22,7 +22,7 @@ public class Test {
             @Override
             public void imageCreated(int num, BufferedImage image) {
                 try {
-                    decoder.decode(image);
+                    decoder.decode(image, 0);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

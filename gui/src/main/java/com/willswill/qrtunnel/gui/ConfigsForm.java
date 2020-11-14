@@ -12,7 +12,7 @@ public class ConfigsForm {
     private JTextField chunkSizeTextField;
     private JTextField imageWidthTextField;
     private JTextField sendIntervalTextField;
-    private JTextField threadCountTextField;
+    private JComboBox senderLayoutComboBox;
     private JButton saveConfigsButton;
 
     private JFrame frame;
@@ -22,20 +22,23 @@ public class ConfigsForm {
         ConfigsForm form = new ConfigsForm();
         frame.setContentPane(form.panel1);
         frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        frame.setResizable(false);
+        form.frame = frame;
 
         form.initComponents();
         form.fillForm();
 
         frame.pack();
         frame.setVisible(true);
-
-        form.frame = frame;
         return form;
     }
 
     void initComponents() {
         saveConfigsButton.addActionListener(e -> {
             saveForm();
+            if (Launcher.self.getSenderForm() != null) {
+                Launcher.self.getSenderForm().resetLayout();
+            }
             frame.setVisible(false);
         });
     }
@@ -51,7 +54,7 @@ public class ConfigsForm {
         appConfigs.setImageHeight(appConfigs.getImageWidth());
         appConfigs.setChunkSize(Integer.parseInt(chunkSizeTextField.getText()));
         appConfigs.setSendInterval(Integer.parseInt(sendIntervalTextField.getText()));
-        appConfigs.setThreadCount(Integer.parseInt(threadCountTextField.getText()));
+        appConfigs.setSenderLayout(senderLayoutComboBox.getSelectedItem().toString());
     }
 
     void fillForm() {
@@ -60,7 +63,7 @@ public class ConfigsForm {
         imageWidthTextField.setText(String.valueOf(appConfigs.getImageWidth()));
         chunkSizeTextField.setText(String.valueOf(appConfigs.getChunkSize()));
         sendIntervalTextField.setText(String.valueOf(appConfigs.getSendInterval()));
-        threadCountTextField.setText(String.valueOf(appConfigs.getThreadCount()));
+        senderLayoutComboBox.setSelectedItem(appConfigs.getSenderLayout());
     }
 
     {
@@ -101,7 +104,7 @@ public class ConfigsForm {
         saveDirTextField = new JTextArea();
         saveDirTextField.setEditable(false);
         saveDirTextField.setEnabled(true);
-        saveDirTextField.setPreferredSize(new Dimension(200, 24));
+        saveDirTextField.setPreferredSize(new Dimension(220, 20));
         panel3.add(saveDirTextField);
         chooseButton = new JButton();
         chooseButton.setText("Choose");
@@ -159,11 +162,25 @@ public class ConfigsForm {
         final JLabel label7 = new JLabel();
         label7.setHorizontalAlignment(4);
         label7.setPreferredSize(new Dimension(120, 17));
-        label7.setText("QR Code Count");
+        label7.setText("Sender Layout");
         panel9.add(label7, BorderLayout.WEST);
-        threadCountTextField = new JTextField();
-        threadCountTextField.setPreferredSize(new Dimension(50, 24));
-        panel9.add(threadCountTextField, BorderLayout.CENTER);
+        senderLayoutComboBox = new JComboBox();
+        final DefaultComboBoxModel defaultComboBoxModel1 = new DefaultComboBoxModel();
+        defaultComboBoxModel1.addElement("1*1");
+        defaultComboBoxModel1.addElement("1*2");
+        defaultComboBoxModel1.addElement("1*3");
+        defaultComboBoxModel1.addElement("1*4");
+        defaultComboBoxModel1.addElement("2*1");
+        defaultComboBoxModel1.addElement("2*2");
+        defaultComboBoxModel1.addElement("2*3");
+        defaultComboBoxModel1.addElement("2*4");
+        defaultComboBoxModel1.addElement("3*1");
+        defaultComboBoxModel1.addElement("3*2");
+        defaultComboBoxModel1.addElement("3*3");
+        defaultComboBoxModel1.addElement("3*4");
+        senderLayoutComboBox.setModel(defaultComboBoxModel1);
+        senderLayoutComboBox.setPreferredSize(new Dimension(70, 30));
+        panel9.add(senderLayoutComboBox, BorderLayout.CENTER);
         final JPanel panel10 = new JPanel();
         panel10.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
         panel10.setPreferredSize(new Dimension(400, 40));
@@ -198,4 +215,5 @@ public class ConfigsForm {
     public JComponent $$$getRootComponent$$$() {
         return panel1;
     }
+
 }

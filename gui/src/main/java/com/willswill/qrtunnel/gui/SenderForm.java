@@ -4,6 +4,7 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
+import com.willswill.qrtunnel.core.AppConfigs;
 import com.willswill.qrtunnel.core.Encoder;
 import com.willswill.qrtunnel.core.EncoderCallback;
 import com.willswill.qrtunnel.core.FileInfo;
@@ -28,7 +29,7 @@ public class SenderForm {
     private JProgressBar totalProgress;
     private JProgressBar fileProgress;
     private JLabel filenameLabel;
-    private ImageView imageView;
+    private java.util.List<ImageView> imageViewList;
 
     private JFrame frame;
     private Encoder encoder;
@@ -43,16 +44,16 @@ public class SenderForm {
     public static SenderForm create() {
         JFrame frame = new JFrame("SenderForm");
         frame.setSize(500, 500);
-        frame.setLocationRelativeTo(null);  // 窗体居中显示
         SenderForm form = new SenderForm();
         frame.setContentPane(form.panel1);
         frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        frame.setResizable(false);
+        form.frame = frame;
 
         form.initForm();
 
         frame.pack();
         frame.setVisible(true);
-        form.frame = frame;
         return form;
     }
 
@@ -60,9 +61,15 @@ public class SenderForm {
         frame.setVisible(true);
     }
 
+    public void resetLayout() {
+        initImagePanel();
+        showLayoutImage();
+    }
+
     public void initForm() {
         initEncoder();
         initFileChooser();
+        initImagePanel();
         initOtherComponents();
     }
 
@@ -73,8 +80,10 @@ public class SenderForm {
                 try {
                     imageIndex = num;
                     updateProgress();
-                    imageView.setImage(image);
-                    Thread.sleep(Launcher.getAppConfigs().getSendInterval());
+                    imageViewList.get(num % imageViewList.size()).setImage(image);
+                    if (num % imageViewList.size() == 0 || num == totalImages) {
+                        Thread.sleep(Launcher.getAppConfigs().getSendInterval());
+                    }
                 } catch (Exception e) {
                     log.error("Error displaying image", e);
                 }
@@ -108,9 +117,6 @@ public class SenderForm {
     }
 
     void initOtherComponents() {
-        imageView = new ImageView(null, Launcher.getAppConfigs().getImageWidth(), Launcher.getAppConfigs().getImageWidth(), 0);
-        imagePanel.add(imageView, BorderLayout.CENTER);
-
         startButton.addActionListener(e -> {
             if (selectedFile == null) {
                 JOptionPane.showMessageDialog(panel1, "No file selected!");
@@ -124,15 +130,36 @@ public class SenderForm {
             encoder.interrupt();
         });
 
-        showRectImage();
+        showLayoutImage();
     }
 
-    void showRectImage() {
+    void initImagePanel() {
+        imagePanel.removeAll();
+        imageViewList = new ArrayList<>();
+        AppConfigs appConfigs = Launcher.getAppConfigs();
+        String[] split = appConfigs.getSenderLayout().split("\\*");
+        int rows = Integer.parseInt(split[0]);
+        int cols = Integer.parseInt(split[1]);
+        imagePanel.setPreferredSize(new Dimension(appConfigs.getImageWidth() * cols, appConfigs.getImageHeight() * rows));
+        for (int i = 0; i < rows * cols; i++) {
+            ImageView imageView = new ImageView(null, appConfigs.getImageWidth(), appConfigs.getImageWidth(), 0);
+            imagePanel.add(imageView, BorderLayout.CENTER);
+            imageViewList.add(imageView);
+        }
+        imagePanel.updateUI();
+        frame.pack();
+    }
+
+    void showLayoutImage() {
         try {
-            String content = imageView.getImageWidth() + "*" + imageView.getImageHeight();
-            BitMatrix bitMatrix = new QRCodeWriter().encode(content, BarcodeFormat.QR_CODE, Launcher.getAppConfigs().getImageWidth(), Launcher.getAppConfigs().getImageWidth());
-            BufferedImage image = MatrixToImageWriter.toBufferedImage(bitMatrix);
-            imageView.setImage(image);
+            AppConfigs appConfigs = Launcher.getAppConfigs();
+            for (int i = 0; i < imageViewList.size(); i++) {
+                ImageView imageView = imageViewList.get(i);
+                String content = (i + 1) + "/" + appConfigs.getSenderLayout() + "/" + imageView.getImageWidth() + "*" + imageView.getImageHeight();
+                BitMatrix bitMatrix = new QRCodeWriter().encode(content, BarcodeFormat.QR_CODE, appConfigs.getImageWidth(), appConfigs.getImageWidth());
+                BufferedImage image = MatrixToImageWriter.toBufferedImage(bitMatrix);
+                imageView.setImage(image);
+            }
         } catch (Exception e) {
             log.error("Can't create QR code", e);
         }
@@ -190,7 +217,7 @@ public class SenderForm {
             }
         }
         resetProgress();
-        showRectImage();
+        showLayoutImage();
     }
 
     java.util.List<File> listFiles(File dir) {
@@ -274,7 +301,7 @@ public class SenderForm {
         stopButton.setText("Stop");
         panel5.add(stopButton);
         imagePanel = new JPanel();
-        imagePanel.setLayout(new BorderLayout(0, 0));
+        imagePanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
         panel1.add(imagePanel, BorderLayout.CENTER);
     }
 

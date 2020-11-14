@@ -31,8 +31,6 @@ public class Decoder {
     private RandomAccessFile dataFile;
     private RandomAccessFile configFile;
     private byte[] receivedFlags;
-    private int lastNum = -1;
-    private int lastNonce = -1;
 
     public Decoder(AppConfigs appConfigs, DecoderCallback callback) {
         this.appConfigs = appConfigs;
@@ -44,39 +42,37 @@ public class Decoder {
         hints.put(DecodeHintType.PURE_BARCODE, "true");
     }
 
-    // crc/nonce/type/num
-    // 8  /4    /4   /4  /4
-    public void decode(BufferedImage image) throws ReaderException, IOException {
+    public int decode(BufferedImage image, int lastNonce) throws ReaderException, IOException {
         BufferedImageLuminanceSource source = new BufferedImageLuminanceSource(image);
         BinaryBitmap binaryBmp = new BinaryBitmap(new HybridBinarizer(source));
 
         try {
             Result result = qrCodeReader.decode(binaryBmp, hints);
             byte[] buf = result.getText().getBytes(StandardCharsets.ISO_8859_1);
-            decode(buf);
+            return decode(buf, lastNonce);
         } finally {
             qrCodeReader.reset();
         }
     }
 
-    public void decode(byte[] buf) throws IOException {
+    public int decode(byte[] buf, int lastNonce) throws IOException {
         if (buf.length < 20) {
-            return;
+            return 0;
         }
+
         long crc = Util.bytesToLong(Arrays.copyOfRange(buf, 0, 8));
         int nonce = Util.bytesToInt(Arrays.copyOfRange(buf, 8, 12));
         int type = Util.bytesToInt(Arrays.copyOfRange(buf, 12, 16));
+
+        if (nonce == lastNonce) {
+            return nonce;
+        }
 
         CRC32 crc32 = new CRC32();
         crc32.update(buf, 8, buf.length - 8);
         if (crc != crc32.getValue()) {
             throw new DecodeException("CRC mismatch!");
         }
-
-        if (nonce == lastNonce) {
-            return;
-        }
-        lastNonce = nonce;
 
         int version = type & 0xffff0000;
         type = type & 0xffff;
@@ -91,18 +87,12 @@ public class Decoder {
                 FileInfo fileInfo = FileInfo.deserialize(bFileInfo);
                 if (this.fileInfo == null || !this.fileInfo.equals(fileInfo)) {
                     this.fileInfo = fileInfo;
-                    lastNum = 0;
                     beginFile();
                 }
             } else if (type == Const.TYPE_DATA) {
                 if (fileInfo == null) {
                     throw new DecodeException("File info is missing!");
                 }
-
-                if (num != lastNum + 1) {
-                    throw new DecodeException("Num mismatch! Desired: " + (lastNum + 1) + ", Received: " + num);
-                }
-                lastNum = num;
 
                 writeFilePart(num, buf, 20, len);
             } else {
@@ -111,6 +101,7 @@ public class Decoder {
         } else {
             throw new DecodeException("Version " + version + " is not supported!");
         }
+        return nonce;
     }
 
     void beginFile() throws IOException {
@@ -178,9 +169,9 @@ public class Decoder {
         reset();
     }
 
-    public void reset() {
-        lastNum = -1;
-        lastNonce = -1;
+    public void reset() throws IOException {
         fileInfo = null;
+        dataFile.close();
+        configFile.close();
     }
 }
