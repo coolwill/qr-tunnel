@@ -30,6 +30,7 @@ public class Decoder {
     private FileInfo fileInfo;
     private RandomAccessFile dataFile;
     private RandomAccessFile configFile;
+    private File configFileFile;
     private byte[] receivedFlags;
 
     public Decoder(AppConfigs appConfigs, DecoderCallback callback) {
@@ -119,7 +120,8 @@ public class Decoder {
         dataFile = new RandomAccessFile(new File(dir, fileInfo.getFilename()), "rw");
         dataFile.setLength(fileInfo.getLength());
 
-        configFile = new RandomAccessFile(new File(dir, fileInfo.getFilename() + ".cfg"), "rw");
+        configFileFile = new File(dir, fileInfo.getFilename() + ".cfg");
+        configFile = new RandomAccessFile(configFileFile, "rw");
         configFile.setLength(fileInfo.getChunkCount());
 
         receivedFlags = new byte[fileInfo.getChunkCount()];
@@ -161,6 +163,8 @@ public class Decoder {
     void endFile() throws IOException {
         log.info("Save file " + fileInfo.getFilename());
         dataFile.close();
+        configFile.close();
+        configFileFile.delete();
 
         if (callback != null) {
             callback.fileEnd(fileInfo);
@@ -171,7 +175,5 @@ public class Decoder {
 
     public void reset() throws IOException {
         fileInfo = null;
-        dataFile.close();
-        configFile.close();
     }
 }
