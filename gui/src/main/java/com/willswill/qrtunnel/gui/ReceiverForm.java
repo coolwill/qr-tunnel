@@ -21,8 +21,6 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class ReceiverForm {
-    private final RingBuffer<String> logBuf = new RingBuffer<>(200);
-    boolean running = false;
     private JPanel panel1;
     private JButton startButton;
     private JTextArea logView;
@@ -30,9 +28,14 @@ public class ReceiverForm {
     private JButton senderButton;
     private JProgressBar fileProgress;
     private JLabel filenameLabel;
+    private JButton configButton;
+
     private JFrame frame;
     private Decoder decoder;
     private Rectangle captureRect;
+    boolean running = false;
+    private final RingBuffer<String> logBuf = new RingBuffer<>(200);
+
     private int totalImages;
     private int imageIndex;
 
@@ -77,6 +80,10 @@ public class ReceiverForm {
 
         senderButton.addActionListener(e -> {
             Launcher.self.showSenderForm();
+        });
+
+        configButton.addActionListener(e -> {
+            Launcher.self.showConfigsForm();
         });
 
         DefaultCaret caret = (DefaultCaret) logView.getCaret();
@@ -211,6 +218,9 @@ public class ReceiverForm {
         senderButton = new JButton();
         senderButton.setText("Sender");
         panel5.add(senderButton);
+        configButton = new JButton();
+        configButton.setText("Config");
+        panel5.add(configButton);
         final JScrollPane scrollPane1 = new JScrollPane();
         scrollPane1.setHorizontalScrollBarPolicy(31);
         panel1.add(scrollPane1, BorderLayout.CENTER);

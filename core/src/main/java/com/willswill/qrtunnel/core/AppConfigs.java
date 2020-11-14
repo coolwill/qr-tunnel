@@ -10,6 +10,8 @@ public class AppConfigs {
     private int imageWidth = 500; // 生成的图片宽度
     private int imageHeight = 500; // 生成的图片高度
 
+    private int threadCount; // 同时发送的图片数量
+
     private String saveDir; // 接收端文件保存路径
     private String rootPath; // 发送端文件相对路径的最上层
 }

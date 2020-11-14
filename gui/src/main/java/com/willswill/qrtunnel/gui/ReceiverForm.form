@@ -66,6 +66,12 @@
                   <text value="Sender"/>
                 </properties>
               </component>
+              <component id="89452" class="javax.swing.JButton" binding="configButton" default-binding="true">
+                <constraints/>
+                <properties>
+                  <text value="Config"/>
+                </properties>
+              </component>
             </children>
           </grid>
         </children>

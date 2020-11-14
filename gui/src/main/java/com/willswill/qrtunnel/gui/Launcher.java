@@ -10,6 +10,7 @@ public class Launcher {
     private AppConfigs appConfigs;
     private ReceiverForm receiverForm;
     private SenderForm senderForm;
+    private ConfigsForm configsForm;
 
     public static void main(String[] args) {
         self.loadConfigs();
@@ -41,5 +42,12 @@ public class Launcher {
             senderForm = SenderForm.create();
         }
         senderForm.show();
+    }
+
+    public void showConfigsForm() {
+        if (configsForm == null) {
+            configsForm = ConfigsForm.create();
+        }
+        configsForm.show();
     }
 }
