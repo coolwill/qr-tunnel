@@ -119,8 +119,12 @@ public class ReceiverForm {
             }
 
             @Override
-            public void fileEnd(FileInfo fileInfo) {
-                Launcher.log("Received file " + fileInfo.getFilename() + " with " + fileInfo.getLength() + "bytes");
+            public void fileEnd(FileInfo fileInfo, boolean crc32Matches) {
+                if (crc32Matches) {
+                    Launcher.log("Received file " + fileInfo.getFilename() + " with " + fileInfo.getLength() + "bytes");
+                } else {
+                    Launcher.log("Received file " + fileInfo.getFilename() + " with error: crc32 is not match");
+                }
                 resetProgress();
             }
         });
@@ -155,12 +159,16 @@ public class ReceiverForm {
                     }
                 }
             } catch (NotFoundException | FormatException | ChecksumException ignore) {
-            } catch (DecodeException e) {
-                log.error("Decode failed: " + e.getMessage());
-            } catch (Exception e) {
-                log.error("Decode failed!", e);
+            } catch (DecodeException ex) {
+                log.error("Decode failed: " + ex.getMessage());
+                Launcher.log(ex.getClass().getName() + ": " + ex.getMessage());
+            } catch (Exception ex) {
+                log.error("Decode failed!", ex);
+                Launcher.log(ex.getClass().getName() + ": " + ex.getMessage());
             }
         }
+        decoder.reset();
+        resetProgress();
     }
 
     void updateProgress() {

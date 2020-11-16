@@ -1,11 +1,13 @@
 package com.willswill.qrtunnel.gui;
 
 import com.willswill.qrtunnel.core.AppConfigs;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 
+@Slf4j
 public class ConfigsForm {
     private JPanel panel1;
     private JTextArea saveDirTextField;
@@ -49,11 +51,18 @@ public class ConfigsForm {
         });
 
         saveConfigsButton.addActionListener(e -> {
-            saveForm();
-            if (Launcher.self.getSenderForm() != null) {
-                Launcher.self.getSenderForm().resetLayout();
+            try {
+                saveForm();
+                if (Launcher.self.getSenderForm() != null) {
+                    Launcher.self.getSenderForm().resetLayout();
+                }
+                frame.setVisible(false);
+            } catch (IncorrectConfigsException ex) {
+                JOptionPane.showMessageDialog(panel1, ex.getMessage());
+            } catch (Exception ex) {
+                log.error("Save configs failed!", ex);
+                JOptionPane.showMessageDialog(panel1, ex.getClass().getName() + ": " + ex.getMessage());
             }
-            frame.setVisible(false);
         });
     }
 
@@ -67,7 +76,11 @@ public class ConfigsForm {
         appConfigs.setSaveDir(saveDirTextField.getText());
         appConfigs.setImageWidth(Integer.parseInt(imageWidthTextField.getText()));
         appConfigs.setImageHeight(appConfigs.getImageWidth());
-        appConfigs.setChunkSize(Integer.parseInt(chunkSizeTextField.getText()));
+        int chunkSize = Integer.parseInt(chunkSizeTextField.getText());
+        if (chunkSize > 2000) {
+            throw new IncorrectConfigsException("The max value of chunk size is 2000");
+        }
+        appConfigs.setChunkSize(chunkSize);
         appConfigs.setSendInterval(Integer.parseInt(sendIntervalTextField.getText()));
         appConfigs.setSenderLayout(senderLayoutComboBox.getSelectedItem().toString());
     }
@@ -186,14 +199,17 @@ public class ConfigsForm {
         defaultComboBoxModel1.addElement("1*2");
         defaultComboBoxModel1.addElement("1*3");
         defaultComboBoxModel1.addElement("1*4");
+        defaultComboBoxModel1.addElement("1*5");
         defaultComboBoxModel1.addElement("2*1");
         defaultComboBoxModel1.addElement("2*2");
         defaultComboBoxModel1.addElement("2*3");
         defaultComboBoxModel1.addElement("2*4");
+        defaultComboBoxModel1.addElement("2*5");
         defaultComboBoxModel1.addElement("3*1");
         defaultComboBoxModel1.addElement("3*2");
         defaultComboBoxModel1.addElement("3*3");
         defaultComboBoxModel1.addElement("3*4");
+        defaultComboBoxModel1.addElement("3*5");
         senderLayoutComboBox.setModel(defaultComboBoxModel1);
         senderLayoutComboBox.setPreferredSize(new Dimension(70, 30));
         panel9.add(senderLayoutComboBox, BorderLayout.CENTER);

@@ -66,7 +66,7 @@ public class GetCodeCoordinates {
 
         // check
         if (rect0Left + targetWidth * cols > image.getWidth() || rect0Top + targetHeight * rows > image.getHeight()) {
-            throw new DecodeException("Rect is out of screen");
+            throw new DecodeException("Capture rect is out of screen");
         }
 
         return new Layout(rect0Left, rect0Top, targetWidth, targetHeight, rows, cols);

@@ -72,7 +72,7 @@ public class Decoder {
         CRC32 crc32 = new CRC32();
         crc32.update(buf, 8, buf.length - 8);
         if (crc != crc32.getValue()) {
-            throw new DecodeException("CRC mismatch!");
+            throw new DecodeException("Chunk CRC32 is not match!");
         }
 
         int version = type & 0xffff0000;
@@ -81,12 +81,13 @@ public class Decoder {
             int num = Util.bytesToInt(Arrays.copyOfRange(buf, 16, 20));
             int len = buf.length - 20;
 
-            log.info("Received picture " + num);
+            log.info("Received chunk " + num);
 
-            if (type == Const.TYPE_FILE) { // 重复触发问题
+            if (type == Const.TYPE_FILE) {
                 byte[] bFileInfo = Arrays.copyOfRange(buf, 20, len + 20);
                 FileInfo fileInfo = FileInfo.deserialize(bFileInfo);
                 if (this.fileInfo == null || !this.fileInfo.equals(fileInfo)) {
+                    reset();
                     this.fileInfo = fileInfo;
                     beginFile();
                 }
@@ -161,13 +162,20 @@ public class Decoder {
     }
 
     void endFile() throws IOException {
-        log.info("Save file " + fileInfo.getFilename());
+        log.info("End file " + fileInfo.getFilename());
+
+        // check crc32
+        long crc32 = Util.getCrc32(dataFile);
+        if (crc32 != fileInfo.getCrc32()) {
+            log.error("File CRC32 is not match! Desired:" + fileInfo.getCrc32() + ", Received:" + crc32);
+        }
+
         dataFile.close();
         configFile.close();
         configFileFile.delete();
 
         if (callback != null) {
-            callback.fileEnd(fileInfo);
+            callback.fileEnd(fileInfo, crc32 == fileInfo.getCrc32());
         }
 
         reset();
@@ -175,5 +183,13 @@ public class Decoder {
 
     public void reset() throws IOException {
         fileInfo = null;
+        if (dataFile != null) {
+            dataFile.close();
+            dataFile = null;
+        }
+        if (configFile != null) {
+            configFile.close();
+            configFile = null;
+        }
     }
 }

@@ -109,6 +109,7 @@ public class SenderForm {
             if (file != null && file.exists()) {
                 selectedFile = file;
                 Launcher.getAppConfigs().setRootPath(selectedFile.getParent());
+                Launcher.log("Selected File " + file.getAbsolutePath());
             }
         });
     }
@@ -172,6 +173,7 @@ public class SenderForm {
                 processFile(selectedFile);
             } catch (Exception ex) {
                 log.error("Error processing file", ex);
+                Launcher.log(ex.getClass().getName() + ": " + ex.getMessage());
             }
             frame.setAlwaysOnTop(false);
             chooseButton.setEnabled(true);
@@ -192,8 +194,9 @@ public class SenderForm {
             updateProgress();
             try {
                 encoder.encode(selectedFile);
-            } catch (Exception e) {
-                log.error("Error processing file", e);
+            } catch (Exception ex) {
+                log.error("Error processing file", ex);
+                Launcher.log(ex.getClass().getName() + ": " + ex.getMessage());
             }
         } else if (selectedFile.isDirectory()) {
             java.util.List<File> files = listFiles(selectedFile);
@@ -208,8 +211,9 @@ public class SenderForm {
                 File file = files.get(i);
                 try {
                     encoder.encode(file);
-                } catch (Exception e) {
-                    log.error("Error processing file", e);
+                } catch (Exception ex) {
+                    log.error("Error processing file", ex);
+                    Launcher.log(ex.getClass().getName() + ": " + ex.getMessage());
                 }
             }
         }

@@ -1,6 +1,10 @@
 package com.willswill.qrtunnel.core;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
+import java.util.zip.CRC32;
 
 public class Util {
     public static byte[] intToBytes(int a) {
@@ -30,5 +34,23 @@ public class Util {
         buffer.put(bytes, 0, bytes.length);
         buffer.flip(); // need flip
         return buffer.getLong();
+    }
+
+    public static long getCrc32(File file) throws IOException {
+        try (RandomAccessFile file1 = new RandomAccessFile(file, "r")) {
+            return getCrc32(file1);
+        }
+    }
+
+    public static long getCrc32(RandomAccessFile file) throws IOException {
+        CRC32 crc32 = new CRC32();
+        byte[] bytes = new byte[1024];
+        file.seek(0);
+        int len = file.read(bytes);
+        while (len > 0) {
+            crc32.update(bytes, 0, len);
+            len = file.read(bytes);
+        }
+        return crc32.getValue();
     }
 }

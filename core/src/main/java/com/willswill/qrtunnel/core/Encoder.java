@@ -50,11 +50,12 @@ public class Encoder {
     }
 
     public void encode(File file) throws IOException, WriterException {
-        log.info("begin file " + file.getAbsolutePath());
+        log.info("Begin file " + file.getAbsolutePath());
         FileInfo fileInfo = new FileInfo(
                 appConfigs.getRootPath() == null ? "/" : file.getParentFile().getAbsolutePath().substring(appConfigs.getRootPath().length()),
                 file.getName(),
                 file.length(),
+                Util.getCrc32(file),
                 appConfigs.getChunkSize(),
                 (int) Math.ceil(file.length() / (double) appConfigs.getChunkSize()));
 
@@ -77,7 +78,7 @@ public class Encoder {
             while (running && inputStream.available() > 0) {
                 int len = inputStream.read(buf, 20, appConfigs.getChunkSize());
                 if (len > 0) {
-                    log.info("Send picture " + (num));
+                    log.info("Send chunk " + (num));
 
                     encode(Const.VERSION_1 | Const.TYPE_DATA, num, len);
                 }

@@ -7,6 +7,6 @@ public interface DecoderCallback {
     default void fileBegin(FileInfo fileInfo) {
     }
 
-    default void fileEnd(FileInfo fileInfo) {
+    default void fileEnd(FileInfo fileInfo, boolean crc32Matches) {
     }
 }
