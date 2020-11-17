@@ -6,6 +6,9 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.util.zip.CRC32;
 
+/**
+ * @author Will
+ */
 public class Util {
     public static byte[] intToBytes(int a) {
         return new byte[]{

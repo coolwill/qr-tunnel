@@ -7,7 +7,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**
- * @author 李伟
+ * @author Will
  */
 public class ImageView extends JPanel {
     @Getter

@@ -3,6 +3,9 @@ package com.willswill.qrtunnel.gui;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author Will
+ */
 public class RingBuffer<T> {
     private final List<T> buf;
     private final int maxSize;

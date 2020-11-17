@@ -5,6 +5,9 @@ import lombok.Data;
 
 import java.io.*;
 
+/**
+ * @author Will
+ */
 @Data
 @AllArgsConstructor
 public class FileInfo {

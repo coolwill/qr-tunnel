@@ -5,6 +5,9 @@ import lombok.Data;
 
 import java.io.File;
 
+/**
+ * @author Will
+ */
 @Data
 public class Launcher {
     public static final Launcher self = new Launcher();

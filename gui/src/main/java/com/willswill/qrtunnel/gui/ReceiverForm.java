@@ -17,7 +17,7 @@ import java.awt.image.BufferedImage;
 import java.util.stream.Collectors;
 
 /**
- * @author 李伟
+ * @author Will
  */
 @Slf4j
 public class ReceiverForm {

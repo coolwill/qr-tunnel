@@ -1,5 +1,8 @@
 package com.willswill.qrtunnel.core;
 
+/**
+ * @author Will
+ */
 public interface DecoderCallback {
     default void imageReceived(int num) {
     }

@@ -17,7 +17,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 /**
- * @author 李伟
+ * @author Will
  */
 @Slf4j
 public class SenderForm {

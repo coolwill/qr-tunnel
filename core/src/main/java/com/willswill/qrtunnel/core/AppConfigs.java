@@ -2,6 +2,9 @@ package com.willswill.qrtunnel.core;
 
 import lombok.Data;
 
+/**
+ * @author Will
+ */
 @Data
 public class AppConfigs {
     private int chunkSize = 2000; // 每张图片所包含的数据大小，最大值是

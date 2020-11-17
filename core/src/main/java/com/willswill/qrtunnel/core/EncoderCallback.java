@@ -3,7 +3,7 @@ package com.willswill.qrtunnel.core;
 import java.awt.image.BufferedImage;
 
 /**
- * @author 李伟
+ * @author Will
  */
 public interface EncoderCallback {
     default void imageCreated(int num, BufferedImage image) {

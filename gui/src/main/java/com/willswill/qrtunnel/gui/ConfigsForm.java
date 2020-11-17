@@ -7,6 +7,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 
+/**
+ * @author Will
+ */
 @Slf4j
 public class ConfigsForm {
     private JPanel panel1;

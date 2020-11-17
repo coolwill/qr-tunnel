@@ -2,6 +2,9 @@ package com.willswill.qrtunnel.core;
 
 import lombok.Data;
 
+/**
+ * @author Will
+ */
 @Data
 public class SenderLayout {
     private int width;

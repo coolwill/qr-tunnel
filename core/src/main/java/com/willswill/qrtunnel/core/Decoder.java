@@ -19,6 +19,9 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.zip.CRC32;
 
+/**
+ * @author Will
+ */
 @Slf4j
 public class Decoder {
     private final QRCodeReader qrCodeReader;

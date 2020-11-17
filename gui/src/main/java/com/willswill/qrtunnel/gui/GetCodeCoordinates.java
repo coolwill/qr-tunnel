@@ -12,6 +12,9 @@ import java.awt.image.BufferedImage;
 import java.util.EnumMap;
 import java.util.Map;
 
+/**
+ * @author Will
+ */
 public class GetCodeCoordinates {
     public static Layout detect(BufferedImage image) throws ReaderException, DecodeException {
         QRCodeReader qrCodeReader = new QRCodeReader();

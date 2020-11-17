@@ -8,6 +8,9 @@ import com.willswill.qrtunnel.core.EncoderCallback;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
+/**
+ * @author Will
+ */
 public class Test {
     public static void main(String[] args) {
         test2();
