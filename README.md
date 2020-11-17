@@ -1,6 +1,9 @@
 # qrtunnel
 A fancy way to transfer files, via QR code!
 
+# See how it works
+https://imgur.com/a/eZuybJV
+
 # Why qrtunnel
 When you are working with remote desktop, and you are restricted from copy files/clipboard access from inside desctop to outside, then this tool will helps you.
 
