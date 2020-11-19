@@ -4,6 +4,11 @@ import com.willswill.qrtunnel.core.AppConfigs;
 import lombok.Data;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * @author Will
@@ -20,6 +25,23 @@ public class Launcher {
     public static void main(String[] args) {
         self.loadConfigs();
         self.showReceiverForm();
+    }
+
+    private Launcher() {
+        File logDir = new File("logs");
+        if (!logDir.exists()) {
+            logDir.mkdir();
+        }
+        String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        File file = new File(logDir, date + ".log");
+
+        try {
+            PrintStream printStream = new PrintStream(new FileOutputStream(file, true));
+            System.setOut(printStream);
+            System.setErr(printStream);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     public static AppConfigs getAppConfigs() {
